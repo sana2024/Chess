@@ -54,8 +54,8 @@ public class ChessBoard : MonoBehaviour
     public Material darktileMaterial;
     public ChessPiece currentlyDragging;
     public List<Vector2Int> availableMoves = new List<Vector2Int>();
-    private List<ChessPiece> deadWhites = new List<ChessPiece>();
-    private List<ChessPiece> deadBlacks = new List<ChessPiece>();
+    public List<ChessPiece> deadWhites = new List<ChessPiece>();
+    public List<ChessPiece> deadBlacks = new List<ChessPiece>();
     private List<Vector2Int[]> moveList = new List<Vector2Int[]>();
     public bool isWhiteTurn;
     [Header("Prefabs & Materials")]
@@ -67,12 +67,12 @@ public class ChessBoard : MonoBehaviour
     private Camera currentCamera;
     private Vector2Int currentHover;
     bool flipTiles = false;
-    int yOffset = 0;
-    float tileSize = 1f;
+    public int yOffset = 0;
+    public float tileSize = 1f;
     private SpecialMove specialMove;
     public ChessPiece[,] chessPieces; 
-    [SerializeField] private float deathSize = .1f;
-    [SerializeField] private float deathSpacing = .5f;
+    [SerializeField] public float deathSize = .1f;
+    [SerializeField] public float deathSpacing = .5f;
     [SerializeField] private float dragOffset = 0.75f;
     [SerializeField] private GameObject victoryScreen;
     [SerializeField] private TMPro.TMP_Text victoryText;
@@ -98,7 +98,7 @@ public class ChessBoard : MonoBehaviour
     //this one is for X
     private bool isInCheck;
     private string lastMoveNotation;
-    private bool didLastMoveCapture;
+    public bool didLastMoveCapture;
     private bool didCastleKingsSize;
     private bool didCastleQueensSize;
     //this is used for a promotion ui to delay the next turn untill they perdict the 
@@ -142,7 +142,7 @@ public class ChessBoard : MonoBehaviour
     private List<string> moveNotationList = new List<string>();
     private int moveNumber;
     private bool movedPawn;
-    private bool capturedPiece;
+    public bool capturedPiece;
     private int movesSincePawnMoveOrCapture;
     public int realMoveNumber;
 
@@ -850,7 +850,7 @@ public class ChessBoard : MonoBehaviour
     }
     private bool MoveTo(ChessPiece cp, int x, int y)
     {
-        Debug.Log("moving" + x + " " + y);
+        Debug.Log("moving" + chessPieces[x,y]);
         Vector2Int previousPosition = new Vector2Int(cp.currentX, cp.currentY);
         if (!ContainsValidMove(ref availableMoves, new Vector2Int(x, y)))
         {
@@ -861,7 +861,7 @@ public class ChessBoard : MonoBehaviour
         {
             ChessPiece ocp = chessPieces[x, y];
 
-            Debug.Log("hitted chess pieces " + ocp.currentX + " " + ocp.currentY);
+ 
             if (cp.team == ocp.team)
             {
                 return false;
@@ -881,7 +881,12 @@ public class ChessBoard : MonoBehaviour
 
                 deadWhites.Add(ocp);
                 ocp.SetScale(Vector3.one * deathSize);
-                ocp.SetPosition(new Vector3(8 * tileSize, -tileSize / 4, yOffset) + new Vector3(tileSize / 2, 0, 0) + (Vector3.up * deathSpacing) * deadWhites.Count);
+                Vector3 NewPostion = new Vector3(8 * tileSize, -tileSize / 4, yOffset) + new Vector3(tileSize / 2, 0, 0) + (Vector3.up * deathSpacing) * deadWhites.Count;
+                ocp.SetPosition(NewPostion);
+
+                var state = MatchDataJson.SetHit(ocp.currentX , ocp.currentY);
+                DataSync.Instance.SendMatchState(OpCode.Hit, state);
+ 
             }
             else
             {
@@ -895,6 +900,9 @@ public class ChessBoard : MonoBehaviour
                 deadBlacks.Add(ocp);
                 ocp.SetScale(Vector3.one * deathSize);
                 ocp.SetPosition(new Vector3(-tileSize, -tileSize / 4, yOffset) + new Vector3(tileSize / 2, 0, 0) + (Vector3.up * deathSpacing) * deadBlacks.Count);
+
+                var state = MatchDataJson.SetHit(ocp.currentX, ocp.currentY);
+                DataSync.Instance.SendMatchState(OpCode.Hit, state);
 
             }
         }
@@ -1318,6 +1326,17 @@ public class ChessBoard : MonoBehaviour
         isWhiteTurn = !isWhiteTurn;
         ChangeTurn();
     }
+
+    public void SendPromotion(string PieceType)
+    {
+        Vector2Int[] lastMove = moveList[moveList.Count - 1];
+        ChessPiece targetPawn = chessPieces[lastMove[1].x, lastMove[1].y];
+
+        var state = MatchDataJson.SetPromotion(targetPawn.name , PieceType.ToString());
+        DataSync.Instance.SendMatchState(OpCode.Promotion , state);
+        
+    }
+
     public void ProcessBishopSelect()
     {
 
@@ -1617,7 +1636,7 @@ public class ChessBoard : MonoBehaviour
         }
     }
 
-    private void CheckMate(int team)
+    public void CheckMate(int team)
     {
 
         DisplayVictory(team);

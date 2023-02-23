@@ -18,13 +18,44 @@ public class MatchDataJson
     }
 
 
-    public static string SetPostion(string CurrentlyDragging,string  PosX , string PosY)
+    public static string SetPostion(string piece, string  PosX , string PosY)
     {
         var values = new Dictionary<string, string>
         {
-            { "CurrentlyDragging" , CurrentlyDragging },
+            { "CurrentlyDragging" , piece},
             { "PosX" ,  PosX},
             { "PosY" ,  PosY}
+
+        };
+
+        return values.ToJson();
+    }
+
+
+    public static string SetHit(int x , int y)
+    {
+        var values = new Dictionary<string, string>
+        {
+            { "x",  x.ToString() },
+            { "y",  y.ToString() },
+ 
+ 
+ 
+        };
+
+        return values.ToJson();
+    }
+
+
+
+    public static string SetPromotion(string Piece , string PieceType)
+    {
+        var values = new Dictionary<string, string>
+        {
+            { "PromotedPiece",  Piece},
+            { "PieceType",  PieceType },
+
+
 
         };
 

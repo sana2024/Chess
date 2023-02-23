@@ -1717,6 +1717,8 @@ MonoBehaviour:
   darktileMaterial: {fileID: 2100000, guid: eaa987884b0174f9390b18da5451e11d, type: 2}
   currentlyDragging: {fileID: 0}
   availableMoves: []
+  deadWhites: []
+  deadBlacks: []
   isWhiteTurn: 0
   prefabs:
   - {fileID: 6869280976541768428, guid: 40f9665881ae94e61bb00b94179f6133, type: 3}
@@ -1731,6 +1733,8 @@ MonoBehaviour:
   - {fileID: 9067023689063327811, guid: 0f511c21834044146b3ba7d10dcf3d4c, type: 3}
   - {fileID: 7588602113687711543, guid: 77459d590460a4c4c9e7d39b7c024c47, type: 3}
   - {fileID: 5545512863927825937, guid: cbcc14dcf4d2e4e57a226c3d264baa3c, type: 3}
+  yOffset: 0
+  tileSize: 1
   deathSize: 0.1
   deathSpacing: 0.5
   dragOffset: 1.75
@@ -1738,6 +1742,7 @@ MonoBehaviour:
   victoryText: {fileID: 647987756}
   promotionSelection: {fileID: 1839701435}
   evalSlider: {fileID: 244963527}
+  didLastMoveCapture: 0
   WhiteQueenImage: {fileID: 21300000, guid: b8c9c97fd2954417283836291ffba5bd, type: 3}
   WhiteRookImage: {fileID: 21300000, guid: ac4596cece4c04edea3880b4dc6b8f8a, type: 3}
   WhiteBishopImage: {fileID: 21300000, guid: 27f855d7f1bc8438688a0a5f6734772b, type: 3}
@@ -1747,6 +1752,7 @@ MonoBehaviour:
   BlackBishopImage: {fileID: 21300000, guid: f7571c03aad0842a78180a3676329a15, type: 3}
   BlackKnightImage: {fileID: 21300000, guid: 70ab4a24b892a4b42bdf9ecd3fab9c13, type: 3}
   notationText: {fileID: 651009025}
+  capturedPiece: 0
   realMoveNumber: 0
 --- !u!4 &532869492
 Transform:
@@ -2788,6 +2794,18 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 532869491}
+        m_TargetAssemblyTypeName: ChessBoard, Assembly-CSharp
+        m_MethodName: SendPromotion
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Bishop
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &830134147
@@ -4274,6 +4292,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 532869491}
+        m_TargetAssemblyTypeName: ChessBoard, Assembly-CSharp
+        m_MethodName: SendPromotion
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Rook
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1434002134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4878,6 +4908,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 532869491}
+        m_TargetAssemblyTypeName: ChessBoard, Assembly-CSharp
+        m_MethodName: SendPromotion
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Knight
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1670123863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5189,6 +5231,18 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 532869491}
+        m_TargetAssemblyTypeName: ChessBoard, Assembly-CSharp
+        m_MethodName: SendPromotion
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Queen
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1847732125
