@@ -18,7 +18,9 @@ public class Matchmaking : MonoBehaviour
 
     public async void findMatch()
     {
-        await PassData.socket.AddMatchmakerAsync();
+        var properity = new Dictionary<string, string>() {{"board", "cualalampur"} };
+        var query = "+properties.board:" + "cualalampur";
+        await PassData.socket.AddMatchmakerAsync(query,2,2,properity );
         Searching.text = "searching";
         Debug.Log("searching");
     }

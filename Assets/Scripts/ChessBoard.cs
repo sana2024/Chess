@@ -860,6 +860,8 @@ public class ChessBoard : MonoBehaviour
         if (chessPieces[x, y] != null)
         {
             ChessPiece ocp = chessPieces[x, y];
+
+            Debug.Log("hitted chess pieces " + ocp.currentX + " " + ocp.currentY);
             if (cp.team == ocp.team)
             {
                 return false;

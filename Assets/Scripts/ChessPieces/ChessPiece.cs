@@ -34,8 +34,7 @@ public class ChessPiece : MonoBehaviour
         {
             transform.position = desiredPosition;
         } 
-
-        
+   
     } 
     public virtual void SetScale (Vector3 scale, bool force = false)
 
