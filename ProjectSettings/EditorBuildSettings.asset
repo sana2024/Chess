@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Login.unity
+    guid: 390cc4a7f59f64f11a239ef5b264628f
+  - enabled: 1
+    path: Assets/Scenes/Matchmaking.unity
+    guid: 6e3f71ca9f9eb4c5aa17fff7e93d85ae
+  - enabled: 1
+    path: Assets/Scenes/Chess.unity
+    guid: 0d80fa93bd0e2407690ca6266fc5c3bd
+  m_configObjects: {}
