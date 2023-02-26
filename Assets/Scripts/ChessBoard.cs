@@ -1231,6 +1231,17 @@ public class ChessBoard : MonoBehaviour
             // set position to black 
         }
     }
+    public void SelectPromotedPiece(ChessPieceType chessPieceType, int team , int lastMove_x , int lastMove_y)
+    {
+        ChessPiece newPiece = SpawnSinglePiece(chessPieceType, team);
+        newPiece.transform.position = chessPieces[lastMove_x, lastMove_y].gameObject.transform.position;
+        Destroy(chessPieces[lastMove_x, lastMove_y].gameObject);
+        chessPieces[lastMove_x, lastMove_y] = newPiece;
+        PositionSinglePiece(lastMove_x, lastMove_y);
+        //eventually gonna do ui to select
+        didPromoteQueen = true;
+    }
+
     public void ProcessQueenSelect()
     {
 
@@ -1242,26 +1253,15 @@ public class ChessBoard : MonoBehaviour
             if (targetPawn.team == 0 && lastMove[1].y == 7)
             {
                 //change it to select promotion
-
-                ChessPiece newQueen = SpawnSinglePiece(ChessPieceType.Queen, 0);
-                newQueen.transform.position = chessPieces[lastMove[1].x, lastMove[1].y].gameObject.transform.position;
-                Destroy(chessPieces[lastMove[1].x, lastMove[1].y].gameObject);
-                chessPieces[lastMove[1].x, lastMove[1].y] = newQueen;
-                PositionSinglePiece(lastMove[1].x, lastMove[1].y);
-                //eventually gonna do ui to select
-                didPromoteQueen = true;
+ 
+                SelectPromotedPiece(ChessPieceType.Queen , 0 , lastMove[1].x , lastMove[1].y);
+                SendPromotion(lastMove[1].x, lastMove[1].y, 0, ChessPieceType.Queen);
 
             }
             if (targetPawn.team == 1 && lastMove[1].y == 0)
             {
-                //change it to select promotion
-                ChessPiece newQueen = SpawnSinglePiece(ChessPieceType.Queen, 1);
-                newQueen.transform.position = chessPieces[lastMove[1].x, lastMove[1].y].gameObject.transform.position;
-                Destroy(chessPieces[lastMove[1].x, lastMove[1].y].gameObject);
-                chessPieces[lastMove[1].x, lastMove[1].y] = newQueen;
-                PositionSinglePiece(lastMove[1].x, lastMove[1].y);
-                //eventually gonna do ui to select
-                didPromoteQueen = true;
+                SelectPromotedPiece(ChessPieceType.Queen, 1, lastMove[1].x, lastMove[1].y);
+                SendPromotion(lastMove[1].x, lastMove[1].y, 1, ChessPieceType.Queen);
             }
         }
         promotionSelection.SetActive(false);
@@ -1278,6 +1278,9 @@ public class ChessBoard : MonoBehaviour
         isWhiteTurn = !isWhiteTurn;
         ChangeTurn();
     }
+
+
+
     public void ProcessRookSelect()
     {
 
@@ -1290,27 +1293,19 @@ public class ChessBoard : MonoBehaviour
             {
                 //change it to select promotion
 
-                ChessPiece newQueen = SpawnSinglePiece(ChessPieceType.Rook, 0);
-                newQueen.transform.position = chessPieces[lastMove[1].x, lastMove[1].y].gameObject.transform.position;
-                Destroy(chessPieces[lastMove[1].x, lastMove[1].y].gameObject);
-                chessPieces[lastMove[1].x, lastMove[1].y] = newQueen;
-                PositionSinglePiece(lastMove[1].x, lastMove[1].y);
-                //eventually gonna do ui to select
-                didPromoteRook = true;
+                SelectPromotedPiece(ChessPieceType.Rook, 0, lastMove[1].x, lastMove[1].y);
+                SendPromotion(lastMove[1].x, lastMove[1].y, 0, ChessPieceType.Rook );
 
             }
             if (targetPawn.team == 1 && lastMove[1].y == 0)
             {
                 //change it to select promotion
-                ChessPiece newQueen = SpawnSinglePiece(ChessPieceType.Rook, 1);
-                newQueen.transform.position = chessPieces[lastMove[1].x, lastMove[1].y].gameObject.transform.position;
-                Destroy(chessPieces[lastMove[1].x, lastMove[1].y].gameObject);
-                chessPieces[lastMove[1].x, lastMove[1].y] = newQueen;
-                PositionSinglePiece(lastMove[1].x, lastMove[1].y);
-                //eventually gonna do ui to select
-                didPromoteRook = true;
+                SelectPromotedPiece(ChessPieceType.Rook, 1, lastMove[1].x, lastMove[1].y);
+                SendPromotion(lastMove[1].x, lastMove[1].y, 1, ChessPieceType.Rook);
             }
         }
+ 
+
         promotionSelection.SetActive(false);
         isSelectingPromotion = false;
         previousFen = GenerateFenFromBoard(chessPieces, isWhiteTurn, !hasForfietedWhiteCastleQueensSize, !hasForfietedWhiteCastleKingsSize, !hasForfietedBlackCastleQueensSize, !hasForfietedBlackCastleKingsSize, pawnDoubleJump);
@@ -1327,14 +1322,12 @@ public class ChessBoard : MonoBehaviour
         ChangeTurn();
     }
 
-    public void SendPromotion(string PieceType)
+    public void SendPromotion(int LastMove_x, int LastMove_y, int team , ChessPieceType chessPieceType)
     {
-        Vector2Int[] lastMove = moveList[moveList.Count - 1];
-        ChessPiece targetPawn = chessPieces[lastMove[1].x, lastMove[1].y];
 
-        var state = MatchDataJson.SetPromotion(targetPawn.name , PieceType.ToString());
-        DataSync.Instance.SendMatchState(OpCode.Promotion , state);
-        
+        var state = MatchDataJson.SetPromotion(LastMove_x.ToString(), LastMove_y.ToString(), team.ToString(), chessPieceType.ToString());
+        DataSync.Instance.SendMatchState(OpCode.Promotion, state);
+
     }
 
     public void ProcessBishopSelect()
@@ -1348,26 +1341,15 @@ public class ChessBoard : MonoBehaviour
             if (targetPawn.team == 0 && lastMove[1].y == 7)
             {
                 //change it to select promotion
-
-                ChessPiece newQueen = SpawnSinglePiece(ChessPieceType.Bishop, 0);
-                newQueen.transform.position = chessPieces[lastMove[1].x, lastMove[1].y].gameObject.transform.position;
-                Destroy(chessPieces[lastMove[1].x, lastMove[1].y].gameObject);
-                chessPieces[lastMove[1].x, lastMove[1].y] = newQueen;
-                PositionSinglePiece(lastMove[1].x, lastMove[1].y);
-                //eventually gonna do ui to select
-                didPromoteBishop = true;
+                SelectPromotedPiece(ChessPieceType.Bishop, 0, lastMove[1].x, lastMove[1].y);
+                SendPromotion(lastMove[1].x, lastMove[1].y, 0, ChessPieceType.Bishop);
 
             }
             if (targetPawn.team == 1 && lastMove[1].y == 0)
             {
                 //change it to select promotion
-                ChessPiece newQueen = SpawnSinglePiece(ChessPieceType.Bishop, 1);
-                newQueen.transform.position = chessPieces[lastMove[1].x, lastMove[1].y].gameObject.transform.position;
-                Destroy(chessPieces[lastMove[1].x, lastMove[1].y].gameObject);
-                chessPieces[lastMove[1].x, lastMove[1].y] = newQueen;
-                PositionSinglePiece(lastMove[1].x, lastMove[1].y);
-                //eventually gonna do ui to select
-                didPromoteBishop = true;
+                SelectPromotedPiece(ChessPieceType.Bishop, 1, lastMove[1].x, lastMove[1].y);
+                SendPromotion(lastMove[1].x, lastMove[1].y, 1, ChessPieceType.Bishop);
             }
         }
         promotionSelection.SetActive(false);
@@ -1395,25 +1377,15 @@ public class ChessBoard : MonoBehaviour
             {
                 //change it to select promotion
 
-                ChessPiece newQueen = SpawnSinglePiece(ChessPieceType.Knight, 0);
-                newQueen.transform.position = chessPieces[lastMove[1].x, lastMove[1].y].gameObject.transform.position;
-                Destroy(chessPieces[lastMove[1].x, lastMove[1].y].gameObject);
-                chessPieces[lastMove[1].x, lastMove[1].y] = newQueen;
-                PositionSinglePiece(lastMove[1].x, lastMove[1].y);
-                //eventually gonna do ui to select
-                didPromoteKnight = true;
+                SelectPromotedPiece(ChessPieceType.Knight, 0, lastMove[1].x, lastMove[1].y);
+                SendPromotion(lastMove[1].x, lastMove[1].y, 0, ChessPieceType.Knight);
 
             }
             if (targetPawn.team == 1 && lastMove[1].y == 0)
             {
                 //change it to select promotion
-                ChessPiece newQueen = SpawnSinglePiece(ChessPieceType.Knight, 1);
-                newQueen.transform.position = chessPieces[lastMove[1].x, lastMove[1].y].gameObject.transform.position;
-                Destroy(chessPieces[lastMove[1].x, lastMove[1].y].gameObject);
-                chessPieces[lastMove[1].x, lastMove[1].y] = newQueen;
-                PositionSinglePiece(lastMove[1].x, lastMove[1].y);
-                //eventually gonna do ui to select
-                didPromoteKnight = true;
+                SelectPromotedPiece(ChessPieceType.Knight, 1, lastMove[1].x, lastMove[1].y);
+                SendPromotion(lastMove[1].x, lastMove[1].y, 1, ChessPieceType.Knight);
             }
         }
         promotionSelection.SetActive(false);

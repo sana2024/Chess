@@ -48,12 +48,14 @@ public class MatchDataJson
 
 
 
-    public static string SetPromotion(string Piece , string PieceType)
+    public static string SetPromotion(string x , string y , string team , string pieceType)
     {
         var values = new Dictionary<string, string>
         {
-            { "PromotedPiece",  Piece},
-            { "PieceType",  PieceType },
+            { "LastMove_x",  x},
+            { "LastMove_Y",  y},
+            { "Team",  team},
+            { "Type",  pieceType},
 
 
 

@@ -11,6 +11,7 @@ public class DataSync : MonoBehaviour
     ISocket isocket;
 
     public static DataSync Instance;
+    ChessPieceType PieceType;
 
     private void Awake()
     {
@@ -132,12 +133,20 @@ public class DataSync : MonoBehaviour
 
             case OpCode.Promotion:
 
-                GameObject PromotedPieceOb = GameObject.Find(state["PromotedPiece"]);
-                ChessPiece Promotediece = PromotedPieceOb.GetComponent<ChessPiece>();
+                int LastMove_x = int.Parse(state["LastMove_x"]);
+                int LastMove_y = int.Parse(state["LastMove_Y"]);
+                int team = int.Parse(state["Team"]);
+ 
+                Enum.TryParse<ChessPieceType>(state["Type"] , out PieceType);
+
+                ChessBoard.Instance.SelectPromotedPiece(PieceType , team , LastMove_x , LastMove_y);
+                ChessBoard.Instance.chessPieces[LastMove_x, LastMove_y].gameObject.transform.Rotate(0, 0, 180);
 
 
-
-
+                Debug.Log("x " + LastMove_x);
+                Debug.Log("y " + LastMove_y);
+                Debug.Log("team "+ team);
+                Debug.Log("type "+ PieceType);
 
 
 
