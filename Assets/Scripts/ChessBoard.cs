@@ -816,19 +816,40 @@ public class ChessBoard : MonoBehaviour
 
         Vector2Int[] lastMove = moveList[moveList.Count - 1];
         //Debug.Log (lastMove[0].x + " " + lastMove[0].y + " " + lastMove[1].x + " " + lastMove[1].y);
-        tiles[lastMove[0].x, lastMove[0].y].layer = LayerMask.NameToLayer("LastMoveStart");
-        tiles[lastMove[1].x, lastMove[1].y].layer = LayerMask.NameToLayer("LastMoveFinshed");
+
+        AddHighLight(lastMove[0].x , lastMove[0].y, lastMove[1].x , lastMove[1].y);
+
+        var state = MatchDataJson.SetHighLight(lastMove[0].x.ToString(), lastMove[0].y.ToString(), lastMove[1].x.ToString(), lastMove[1].y.ToString());
+        DataSync.Instance.SendMatchState(OpCode.HighLight , state);
+
         //ok so what is happening is then when the tile gets removed its highlights later it then removes the last move highlight so can we put the method farther down?
         Debug.Log("tiles set to indicate last move" + tiles[lastMove[1].x, lastMove[1].y].layer);
 
     }
 
-    private void RemoveLastMoveYellowHighlight()
+    public void AddHighLight(int x0 , int y0 , int x1 , int y1)
     {
-        Vector2Int[] lastMove = moveList[moveList.Count - 1];
+        tiles[x0, y0].layer = LayerMask.NameToLayer("LastMoveStart");
+        tiles[x1, y1].layer = LayerMask.NameToLayer("LastMoveFinshed");
+    }
 
-        tiles[lastMove[0].x, lastMove[0].y].layer = LayerMask.NameToLayer("Tile");
-        tiles[lastMove[1].x, lastMove[1].y].layer = LayerMask.NameToLayer("Tile");
+    //we can't remove the opponents highight by synchronizig it it needs to be removed when we make a move
+    public void RemoveOpponentHightlight(int x0, int y0, int x1, int y1)
+    {
+        tiles[x0, y0].layer = LayerMask.NameToLayer("Tile");
+        tiles[x1, y1].layer = LayerMask.NameToLayer("Tile");
+    }
+
+    public void RemoveLastMoveYellowHighlight()
+    {
+        if (moveList.Count > 0)
+        {
+            Vector2Int[] lastMove = moveList[moveList.Count - 1];
+
+            tiles[lastMove[0].x, lastMove[0].y].layer = LayerMask.NameToLayer("Tile");
+            tiles[lastMove[1].x, lastMove[1].y].layer = LayerMask.NameToLayer("Tile");
+
+        }
     }
 
     private bool ContainsValidMove(ref List<Vector2Int> moves, Vector2 pos)
@@ -918,6 +939,7 @@ public class ChessBoard : MonoBehaviour
         moveList.Add(new Vector2Int[] { previousPosition, new Vector2Int(x, y) });
         //add last move hightlight here so it doesnt get removed earlie 
         AddLastMoveYellowHighlight();
+        RemoveOpponentHightlight(DataSync.Instance.Opponentx0, DataSync.Instance.Opponenty0, DataSync.Instance.Opponentx1, DataSync.Instance.Opponenty1);
         //check for moved pawn 50 move draw rule
         if (cp.type == ChessPieceType.Pawn)
         {

@@ -65,4 +65,18 @@ public class MatchDataJson
     }
 
 
+    public static string SetHighLight(string x0, string y0 , string x1 , string y1)
+    {
+        var values = new Dictionary<string, string>
+        {
+            { "x0",  x0},
+            { "y0",  y0},
+            { "x1",  x1},
+            { "y1",  y1}
+        };
+
+        return values.ToJson();
+    }
+
+
 }

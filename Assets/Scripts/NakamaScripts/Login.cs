@@ -13,10 +13,12 @@ public class Login : MonoBehaviour
     void Start()
     {
         PassData.client = new Client("http", "63.32.46.59", 7350, "defaultkey");
+        Debug.Log("device id " + System.Guid.NewGuid().ToString());
     }
 
     public async void GuestLogin()
     {
+ 
         var deviceId = System.Guid.NewGuid().ToString();
         PassData.session = await PassData.client.AuthenticateDeviceAsync(deviceId);
         PassData.socket = PassData.client.NewSocket();
@@ -26,6 +28,6 @@ public class Login : MonoBehaviour
         await PassData.socket.ConnectAsync(PassData.session, appearOnline, connectionTimeout);
         SceneManager.LoadScene("Matchmaking");
         Debug.Log("session " + PassData.session);
-
+        
     }
 }

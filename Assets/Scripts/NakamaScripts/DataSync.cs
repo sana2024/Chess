@@ -13,6 +13,12 @@ public class DataSync : MonoBehaviour
     public static DataSync Instance;
     ChessPieceType PieceType;
 
+    // we will use these variables to remove the yellow hightlights of our opponent
+  public int Opponentx0;
+  public int Opponenty0;
+  public int Opponentx1;
+  public int Opponenty1;
+
     private void Awake()
     {
         if(Instance == null)
@@ -141,19 +147,36 @@ public class DataSync : MonoBehaviour
 
                 ChessBoard.Instance.SelectPromotedPiece(PieceType , team , LastMove_x , LastMove_y);
                 ChessBoard.Instance.chessPieces[LastMove_x, LastMove_y].gameObject.transform.Rotate(0, 0, 180);
+ 
+                break;
 
 
-                Debug.Log("x " + LastMove_x);
-                Debug.Log("y " + LastMove_y);
-                Debug.Log("team "+ team);
-                Debug.Log("type "+ PieceType);
+            case OpCode.HighLight:
+
+                int x0 = int.Parse(state["x0"]);
+                int y0 = int.Parse(state["y0"]);
+                int x1 = int.Parse(state["x1"]);
+                int y1 = int.Parse(state["y1"]);
 
 
+                  Opponentx0 = x0;
+                  Opponenty0 = y0;
+                  Opponentx1 = x1;
+                  Opponenty1 = y1;
 
+                ChessBoard.Instance.AddHighLight(x0,y0,x1,y1);
+                ChessBoard.Instance.RemoveLastMoveYellowHighlight();
+
+
+                Debug.Log("recieved yellow hightlight");
+
+ 
                 break;
 
 
         }
+
+       
         }
 
     public async void SendMatchState(long opCode, string state)
@@ -162,5 +185,6 @@ public class DataSync : MonoBehaviour
             await isocket.SendMatchStateAsync(PassData.match.Id ,opCode, state);
   
     }
+
 
 }
