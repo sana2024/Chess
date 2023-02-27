@@ -845,6 +845,7 @@ MonoBehaviour:
   Opponenty0: 0
   Opponentx1: 0
   Opponenty1: 0
+  CheckMaterial: {fileID: 0}
 --- !u!4 &183212071
 Transform:
   m_ObjectHideFlags: 0
@@ -962,6 +963,10 @@ PrefabInstance:
     - target: {fileID: 8503278316918839082, guid: 8fded08dd619a47a6a47bf342f4ef081, type: 3}
       propertyPath: m_Name
       value: UnityMainThreadDispatcher
+      objectReference: {fileID: 0}
+    - target: {fileID: 8503278316918839082, guid: 8fded08dd619a47a6a47bf342f4ef081, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8503278316918839084, guid: 8fded08dd619a47a6a47bf342f4ef081, type: 3}
       propertyPath: m_RootOrder
