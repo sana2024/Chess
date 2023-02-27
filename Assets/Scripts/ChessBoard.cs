@@ -1658,6 +1658,10 @@ public class ChessBoard : MonoBehaviour
     {
 
         DisplayVictory(team);
+
+        var state = MatchDataJson.SetCheckmate(team.ToString());
+        DataSync.Instance.SendMatchState(OpCode.CheckMate, state);
+
     }
 
 
@@ -1741,15 +1745,18 @@ public class ChessBoard : MonoBehaviour
 
 
     }
-    private void DisplayVictory(int team)
+    public void DisplayVictory(int team)
     {
+        
         if (team == 0)
         {
             victoryText.text = "Black Wins";
+ 
         }
         else
         {
             victoryText.text = "White Wins";
+
         }
         victoryScreen.SetActive(true);
 

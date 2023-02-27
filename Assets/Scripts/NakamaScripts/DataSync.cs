@@ -198,6 +198,15 @@ public class DataSync : MonoBehaviour
 
                 break;
 
+
+            case OpCode.CheckMate:
+
+                int winner = int.Parse(state["Winner"]);
+
+                ChessBoard.Instance.DisplayVictory(winner);
+
+                break;
+
         }
 
        

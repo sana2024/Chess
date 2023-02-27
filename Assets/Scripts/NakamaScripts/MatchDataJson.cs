@@ -91,4 +91,16 @@ public class MatchDataJson
         return values.ToJson();
     }
 
+
+    public static string SetCheckmate(string winner)
+    {
+        var values = new Dictionary<string, string>
+        {
+            { "Winner",  winner}
+ 
+
+        };
+
+        return values.ToJson();
+    }
 }
