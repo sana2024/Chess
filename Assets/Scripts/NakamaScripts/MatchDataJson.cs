@@ -79,4 +79,16 @@ public class MatchDataJson
     }
 
 
+    public static string SetCheck(int x , int y)
+    {
+        var values = new Dictionary<string, string>
+        {
+            { "Tilex",  x.ToString()},
+            { "Tiley",  y.ToString()}
+
+        };
+
+        return values.ToJson();
+    }
+
 }

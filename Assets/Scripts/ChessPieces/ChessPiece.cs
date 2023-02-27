@@ -28,7 +28,7 @@ public class ChessPiece : MonoBehaviour
 
 
     public virtual void SetPosition(Vector3 position, bool force = false){
-        Debug.Log("set postion ");
+
         desiredPosition = position;
         if (force )
         {

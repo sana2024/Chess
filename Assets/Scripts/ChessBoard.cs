@@ -77,6 +77,8 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private GameObject victoryScreen;
     [SerializeField] private TMPro.TMP_Text victoryText;
 
+    ChessPiece attackingPiece;
+
 
     //castle check mainly needed for threefold draw check
     private bool hasForfietedWhiteCastleKingsSize;
@@ -108,6 +110,7 @@ public class ChessBoard : MonoBehaviour
     private bool didPromoteBishop;
     private bool didPromoteKnight;
     //ok now we need to add all the sprites so we can reasign the buttons
+    [SerializeField] public GameObject CheckImage;
     [SerializeField] private Sprite WhiteQueenImage;
     [SerializeField] private Sprite WhiteRookImage;
     [SerializeField] private Sprite WhiteBishopImage;
@@ -283,14 +286,14 @@ public class ChessBoard : MonoBehaviour
         {
 
 
-            if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight", "LastMoveStart", "LastMoveFinshed")))
+            if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight", "LastMoveStart", "LastMoveFinshed","Piece")))
             {
                 Vector2Int hitPosition = LookupTileIndex(info.transform.gameObject);
                 // Debug. Log("hit" + hitPosition);
 
                 if (currentHover == -Vector2Int.one)
                 {
-                    Debug.Log("hit" + hitPosition);
+ 
                     currentHover = hitPosition;
                     //eventually make a different tile that is if you hover over other tiles, tie into customize board
                     if (tiles[currentHover.x, currentHover.y].layer == 10 || tiles[currentHover.x, currentHover.y].layer == 9)
@@ -353,7 +356,7 @@ public class ChessBoard : MonoBehaviour
                         {
                               var state = MatchDataJson.SetPostion(currentlyDragging.gameObject.name , currentlyDragging.currentX.ToString(), currentlyDragging.currentY.ToString());
                               DataSync.Instance.SendMatchState(OpCode.Postion, state);
-                              Debug.Log("sendin");
+ 
 
                             currentlyDragging = null;
                             RemoveHighlightTiles();
@@ -445,7 +448,7 @@ public class ChessBoard : MonoBehaviour
         yield return new WaitUntil(() => AiCTR.stocky.stockData != "");
 
 
-        Debug.Log("Stock Data is " + AiCTR.stocky.stockData);
+ 
         //Process data and do move;
         //find first  PovScore( and Move.from_uci
         string[] evalArray = AiCTR.stocky.stockData.Split("PovScore(");
@@ -474,11 +477,11 @@ public class ChessBoard : MonoBehaviour
         //todo set eval if ai does not move(trigger eval every move);
 
         string numberPart = eval.Substring(1, eval.Length - 1);
-        Debug.Log("eval" + numberPart);
+ 
 
         int i = 0;
         int.TryParse(numberPart, out i);
-        Debug.Log("eval" + i + " " + eval.Substring(0, 1));
+ 
 
         if (team == true)
         {
@@ -589,7 +592,7 @@ public class ChessBoard : MonoBehaviour
 
         //now move to
         MoveToAI(cp, b, v - 1, promotionString);
-        Debug.Log("moved");
+ 
 
 
     }
@@ -822,8 +825,6 @@ public class ChessBoard : MonoBehaviour
         var state = MatchDataJson.SetHighLight(lastMove[0].x.ToString(), lastMove[0].y.ToString(), lastMove[1].x.ToString(), lastMove[1].y.ToString());
         DataSync.Instance.SendMatchState(OpCode.HighLight , state);
 
-        //ok so what is happening is then when the tile gets removed its highlights later it then removes the last move highlight so can we put the method farther down?
-        Debug.Log("tiles set to indicate last move" + tiles[lastMove[1].x, lastMove[1].y].layer);
 
     }
 
@@ -871,7 +872,7 @@ public class ChessBoard : MonoBehaviour
     }
     private bool MoveTo(ChessPiece cp, int x, int y)
     {
-        Debug.Log("moving" + chessPieces[x,y]);
+ 
         Vector2Int previousPosition = new Vector2Int(cp.currentX, cp.currentY);
         if (!ContainsValidMove(ref availableMoves, new Vector2Int(x, y)))
         {
@@ -960,7 +961,6 @@ public class ChessBoard : MonoBehaviour
 
         if (checkForCheckMate() == true)
         {
-
             if (cp.team == 1)
             {
                 CheckMate(0);
@@ -970,6 +970,26 @@ public class ChessBoard : MonoBehaviour
                 CheckMate(1);
             }
         }
+
+        if (player == Player.white)
+        {
+            GameObject KingOb = GameObject.Find("whiteking4");
+            ChessPiece KingPiece = KingOb.GetComponent<ChessPiece>();
+
+            Debug.Log(KingPiece);
+
+            tiles[KingPiece.currentX, KingPiece.currentY].layer = LayerMask.NameToLayer("Tile");
+        }
+
+        if ( player == Player.black)
+
+        {
+            GameObject KingOb = GameObject.Find("Blackking4");
+            ChessPiece KingPiece = KingOb.GetComponent<ChessPiece>();
+            Debug.Log( tiles[KingPiece.currentX, KingPiece.currentY].gameObject.name);
+            tiles[KingPiece.currentX, KingPiece.currentY].layer = LayerMask.NameToLayer("Tile");
+        }
+
         if (cp.team == 0 && (hasForfietedWhiteCastleQueensSize == false || hasForfietedWhiteCastleKingsSize == false))
         {
             CheckforCastles(cp, previousPosition);
@@ -1132,9 +1152,13 @@ public class ChessBoard : MonoBehaviour
         }
         if (isInCheck == true)
         {
+            Debug.Log("checked");
             s += "+";
+ 
         }
+
         //reset bools
+ 
         isInCheck = false;
         didPromoteBishop = false;
         didPromoteQueen = false;
@@ -1663,6 +1687,7 @@ public class ChessBoard : MonoBehaviour
                     else
                     {
                         attackingPieces.Add(chessPieces[x, y]);
+                        attackingPiece = chessPieces[x, y];
 
                     }
                 }
@@ -1687,6 +1712,9 @@ public class ChessBoard : MonoBehaviour
             // Debug.Log ("moves avalalible" +defendingMoveAvailible.Count + " " + defendingPieces.Count );
             //for notation
             isInCheck = true;
+            var state = MatchDataJson.SetCheck(attackingPiece.currentX , attackingPiece.currentY);
+            DataSync.Instance.SendMatchState(OpCode.check, state);
+
             for (int i = 0; i < defendingPieces.Count; i++)
             {
                 defendingMoveAvailible = defendingPieces[i].GetAvailableMoves(ref chessPieces, TileCountX, TileCountY);
@@ -1699,6 +1727,10 @@ public class ChessBoard : MonoBehaviour
                 }
             }
             return true;
+        }
+        else
+        {
+
         }
         // Debug.Log ("moves avalalible" +defendingMoveAvailible.Count );
 

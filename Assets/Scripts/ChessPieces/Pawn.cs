@@ -46,7 +46,7 @@ public class Pawn : ChessPiece
         int direction = (team== 0 )? 1 : -1;
         //promotion
         if ((team == 0 && currentY == 6) || (team == 1 && currentY == 1)) {
-            Debug.Log ("promotion");
+ 
             return SpecialMove.Promotion;
 
         }
@@ -67,12 +67,12 @@ public class Pawn : ChessPiece
                         //land right or left
                         if (lastMove[1].x == currentX-1){
                             availableMoves.Add(new Vector2Int(currentX-1, currentY + direction ));
-                           Debug.Log ("Enpassnt" + lastMove[1].x  + " "+ " " + (currentX-1 ));
+ 
                             return SpecialMove.EnPassant;
                         }
                          if (lastMove[1].x == currentX+1){
                             availableMoves.Add(new Vector2Int(currentX+1, currentY + direction ));
-                            Debug.Log ("Enpassnt1");
+ 
 
                             return SpecialMove.EnPassant;
 

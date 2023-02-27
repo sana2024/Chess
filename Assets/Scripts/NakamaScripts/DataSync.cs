@@ -18,6 +18,9 @@ public class DataSync : MonoBehaviour
   public int Opponenty0;
   public int Opponentx1;
   public int Opponenty1;
+    ChessPiece KingPiece;
+
+    [SerializeField] Material CheckMaterial;
 
     private void Awake()
     {
@@ -166,13 +169,34 @@ public class DataSync : MonoBehaviour
 
                 ChessBoard.Instance.AddHighLight(x0,y0,x1,y1);
                 ChessBoard.Instance.RemoveLastMoveYellowHighlight();
-
-
-                Debug.Log("recieved yellow hightlight");
-
  
                 break;
 
+
+            case OpCode.check:
+ 
+                if(ChessBoard.Instance.player == Player.white)
+                {
+                    GameObject KingOb = GameObject.Find("whiteking4");
+                    ChessPiece KingPiece = KingOb.GetComponent<ChessPiece>();
+
+                    Debug.Log(KingPiece);
+
+                    ChessBoard.Instance.tiles[KingPiece.currentX ,KingPiece.currentY].layer = 13; 
+                }
+
+                if (ChessBoard.Instance.player == Player.black)
+ 
+                {
+                    GameObject KingOb = GameObject.Find("Blackking4");
+                    ChessPiece KingPiece = KingOb.GetComponent<ChessPiece>();
+                    Debug.Log(ChessBoard.Instance.tiles[KingPiece.currentX, KingPiece.currentY].gameObject.name);
+                    ChessBoard.Instance.tiles[KingPiece.currentX, KingPiece.currentY].layer =13;
+                }
+
+
+
+                break;
 
         }
 

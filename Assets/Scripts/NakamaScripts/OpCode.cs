@@ -9,4 +9,5 @@ public class OpCode
     public const int Hit = 3;
     public const int Promotion = 4;
     public const int HighLight = 5;
+    public const int check = 6;
 }
