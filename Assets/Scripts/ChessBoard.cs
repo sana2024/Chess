@@ -1314,9 +1314,11 @@ public class ChessBoard : MonoBehaviour
         isSelectingPromotion = false;
         previousFen = GenerateFenFromBoard(chessPieces, isWhiteTurn, !hasForfietedWhiteCastleQueensSize, !hasForfietedWhiteCastleKingsSize, !hasForfietedBlackCastleQueensSize, !hasForfietedBlackCastleKingsSize, pawnDoubleJump);
 
-        //make the process happen because we skipped it at the end. 
+        //make the process happen because we skipped it at the end.
+        checkForCheckMate();
         ProcessNotation();
         //lets check for them draws
+
         CheckForInsufficientDraw();
         CheckForNoMovesDraw();
         CheckForThreeFoldDraw();
@@ -1356,7 +1358,8 @@ public class ChessBoard : MonoBehaviour
         isSelectingPromotion = false;
         previousFen = GenerateFenFromBoard(chessPieces, isWhiteTurn, !hasForfietedWhiteCastleQueensSize, !hasForfietedWhiteCastleKingsSize, !hasForfietedBlackCastleQueensSize, !hasForfietedBlackCastleKingsSize, pawnDoubleJump);
 
-        //make the process happen because we skipped it at the end. 
+        //make the process happen because we skipped it at the end.
+        checkForCheckMate();
         ProcessNotation();
 
         //lets check for them draws
@@ -1401,7 +1404,8 @@ public class ChessBoard : MonoBehaviour
         promotionSelection.SetActive(false);
         isSelectingPromotion = false;
         previousFen = GenerateFenFromBoard(chessPieces, isWhiteTurn, !hasForfietedWhiteCastleQueensSize, !hasForfietedWhiteCastleKingsSize, !hasForfietedBlackCastleQueensSize, !hasForfietedBlackCastleKingsSize, pawnDoubleJump);
-        //make the process happen because we skipped it at the end. 
+        //make the process happen because we skipped it at the end.
+        checkForCheckMate();
         ProcessNotation();
         //lets check for them draws
         CheckForInsufficientDraw();
@@ -1437,7 +1441,8 @@ public class ChessBoard : MonoBehaviour
         promotionSelection.SetActive(false);
         isSelectingPromotion = false;
         previousFen = GenerateFenFromBoard(chessPieces, isWhiteTurn, !hasForfietedWhiteCastleQueensSize, !hasForfietedWhiteCastleKingsSize, !hasForfietedBlackCastleQueensSize, !hasForfietedBlackCastleKingsSize, pawnDoubleJump);
-        //make the process happen because we skipped it at the end. 
+        //make the process happen because we skipped it at the end.
+        checkForCheckMate();
         ProcessNotation();
         //lets check for them draws
         CheckForInsufficientDraw();
@@ -1446,6 +1451,7 @@ public class ChessBoard : MonoBehaviour
         CheckFor50MoveDraw();
         isWhiteTurn = !isWhiteTurn;
         ChangeTurn();
+
     }
 
     private void ProcessSpecialMove()
