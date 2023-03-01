@@ -56,7 +56,7 @@ public class ChessBoard : MonoBehaviour
     public List<Vector2Int> availableMoves = new List<Vector2Int>();
     public List<ChessPiece> deadWhites = new List<ChessPiece>();
     public List<ChessPiece> deadBlacks = new List<ChessPiece>();
-    private List<Vector2Int[]> moveList = new List<Vector2Int[]>();
+    public List<Vector2Int[]> moveList = new List<Vector2Int[]>();
     public bool isWhiteTurn;
     [Header("Prefabs & Materials")]
     [SerializeField] private GameObject[] prefabs;
@@ -76,7 +76,7 @@ public class ChessBoard : MonoBehaviour
     [SerializeField] private float dragOffset = 0.75f;
     [SerializeField] private GameObject victoryScreen;
     [SerializeField] private TMPro.TMP_Text victoryText;
-
+    [SerializeField] ScrollRect NotationScrols;
     ChessPiece attackingPiece;
 
 
@@ -141,7 +141,7 @@ public class ChessBoard : MonoBehaviour
 
     public List<ThreeFoldCheckClass> threeFoldChessPiecesCheck = new List<ThreeFoldCheckClass>();
 
-    [SerializeField] private TMPro.TMP_Text notationText;
+    [SerializeField] private Text notationText;
     private List<string> moveNotationList = new List<string>();
     private int moveNumber;
     private bool movedPawn;
@@ -274,6 +274,8 @@ public class ChessBoard : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+
+
         if (!currentCamera)
         {
             currentCamera = Camera.main;
@@ -281,6 +283,10 @@ public class ChessBoard : MonoBehaviour
         }
         RaycastHit info;
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
+
+        
+
+        
         //should move this to after you pick up piece but for now its ok here
         if ((isWhiteTurn && AiCTR.isWhiteStockfish == false) || (!isWhiteTurn && AiCTR.isBlackStockfish == false))
         {
@@ -288,6 +294,11 @@ public class ChessBoard : MonoBehaviour
 
             if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight", "LastMoveStart", "LastMoveFinshed","Piece")))
             {
+                if(info.collider.tag != "Scrol")
+                {
+                    NotationScrols.horizontalNormalizedPosition = 0;
+                }
+
                 Vector2Int hitPosition = LookupTileIndex(info.transform.gameObject);
                 // Debug. Log("hit" + hitPosition);
 
@@ -316,13 +327,14 @@ public class ChessBoard : MonoBehaviour
                 }
                 if (Input.GetMouseButtonDown(0))
                 {
-
+                    NotationScrols.verticalNormalizedPosition = 0f;
                     if (chessPieces[hitPosition.x, hitPosition.y] != null)
                     {
 
                         //is it our turn
                         if ((chessPieces[hitPosition.x, hitPosition.y].team == 0 && isWhiteTurn && player == Player.white) || (chessPieces[hitPosition.x, hitPosition.y].team == 1 && isWhiteTurn == false && player == Player.black))
                         {
+                          
                             RemoveHighlightTiles();
                             currentlyDragging = chessPieces[hitPosition.x, hitPosition.y];
                             availableMoves = currentlyDragging.GetAvailableMoves(ref chessPieces, TileCountX, TileCountY);
@@ -345,6 +357,7 @@ public class ChessBoard : MonoBehaviour
 
                         bool validMove = MoveTo(currentlyDragging, hitPosition.x, hitPosition.y);
  
+
 
                         if (!validMove)
                         {
@@ -1027,33 +1040,101 @@ public class ChessBoard : MonoBehaviour
 
     private void ProcessNotation()
     {
+ 
         moveNumber++;
         realMoveNumber = 1;
-        //this his how to get the actual move number
+        //this is how to get the actual move number
         if (moveNumber % 2 != 0)
         {
             //its an odd number 
             realMoveNumber = (moveNumber + 1) / 2;
+ 
+
+
         }
         else
         {
             realMoveNumber = moveNumber / 2;
+ 
+
+
+
+
         }
         Vector2Int[] lastMove = moveList[moveList.Count - 1];
+  
         string s = convertMoveArrayToChessCords(lastMove);
-        Debug.Log("last move was" + lastMove[1] + "and the notation is " + s);
+        moveNotationList.Add(s);
+        //we are prob gonna wanna display that somewhere
+        // lastMoveNotation = 
+        if (moveNumber % 2 != 0)
+        {
+ 
+            notationText.text += realMoveNumber + ". " + s + " ";
+ 
+
+        }
+        else
+        {
+            notationText.text += s + " ";
+ 
+
+
+
+
+        }
+
+        var state = MatchDataJson.SetNotation(s);
+        DataSync.Instance.SendMatchState(OpCode.Notation , state);
+        NotationScrols.horizontalNormalizedPosition = 0f;
+
+    }
+
+    public void ReviecedNotation(string s)
+    {
+ 
+ 
+        moveNumber++;
+        realMoveNumber = 1;
+        //this is how to get the actual move number
+        if (moveNumber % 2 != 0)
+        {
+            //its an odd number 
+            realMoveNumber = (moveNumber + 1) / 2;
+ 
+        }
+        else
+        {
+            realMoveNumber = moveNumber / 2;
+ 
+
+
+
+
+        }
+
         moveNotationList.Add(s);
         //we are prob gonna wanna display that somewhere
         // lastMoveNotation = 
         if (moveNumber % 2 != 0)
         {
             notationText.text += realMoveNumber + ". " + s + " ";
+ 
+
         }
         else
         {
             notationText.text += s + " ";
+ 
+
+
+
         }
+ 
+
     }
+
+
     private string convertMoveArrayToChessCords(Vector2Int[] move)
     {
 
@@ -1826,7 +1907,7 @@ public class ChessBoard : MonoBehaviour
         //spawn stuff
         SpawnAllPieces();
         PositionAllPieces();
-        notationText.text = "Move List: ";
+        notationText.text = "";
         isWhiteTurn = true;
 
 

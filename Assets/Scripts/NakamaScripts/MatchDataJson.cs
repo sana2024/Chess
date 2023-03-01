@@ -103,4 +103,15 @@ public class MatchDataJson
 
         return values.ToJson();
     }
+
+    public static string SetNotation(string Notation)
+    {
+        var values = new Dictionary<string, string>
+        {
+            { "Notation",  Notation},
+
+        };
+
+        return values.ToJson();
+    }
 }

@@ -11,4 +11,5 @@ public class OpCode
     public const int HighLight = 5;
     public const int check = 6;
     public const int CheckMate =7;
+    public const int Notation = 8;
 }

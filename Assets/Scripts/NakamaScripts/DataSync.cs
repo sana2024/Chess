@@ -207,6 +207,14 @@ public class DataSync : MonoBehaviour
 
                 break;
 
+
+            case OpCode.Notation:
+ 
+                ChessBoard.Instance.ReviecedNotation(state["Notation"]);
+ 
+
+                break;
+
         }
 
        
