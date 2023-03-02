@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using Newtonsoft.Json;
+using UnityEngine.EventSystems;
+
 public enum SpecialMove
 {
 
@@ -271,6 +273,16 @@ public class ChessBoard : MonoBehaviour
         return tileObject;
     }
 
+
+    private bool IsPointerOverUIObject()
+    {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
+    }
+
     // Update is called once per frame
     private void Update()
     {
@@ -283,10 +295,20 @@ public class ChessBoard : MonoBehaviour
         }
         RaycastHit info;
         Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
+ 
 
-        
 
-        
+        if (!IsPointerOverUIObject())
+        {
+            NotationScrols.verticalNormalizedPosition = 0;
+            Debug.Log("normalized");
+        }
+        else
+        {
+            Debug.Log("de normalized");
+        }
+
+
         //should move this to after you pick up piece but for now its ok here
         if ((isWhiteTurn && AiCTR.isWhiteStockfish == false) || (!isWhiteTurn && AiCTR.isBlackStockfish == false))
         {
@@ -294,10 +316,7 @@ public class ChessBoard : MonoBehaviour
 
             if (Physics.Raycast(ray, out info, 100, LayerMask.GetMask("Tile", "Hover", "Highlight", "LastMoveStart", "LastMoveFinshed","Piece")))
             {
-                if(info.collider.tag != "Scrol")
-                {
-                    NotationScrols.horizontalNormalizedPosition = 0;
-                }
+ 
 
                 Vector2Int hitPosition = LookupTileIndex(info.transform.gameObject);
                 // Debug. Log("hit" + hitPosition);
